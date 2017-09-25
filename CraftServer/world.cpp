@@ -1,8 +1,34 @@
 #include "config.h"
 #include "noise.h"
 #include "world.h"
+World::World(int seed, int cache_size):seed1(seed),cache_size(cache_size)
+{
+	
+}
 
-void create_world(int p, int q, world_func func, void *arg) {
+World::World()
+{
+	seed1 = 0;
+	cache_size = 0;
+}
+
+
+map<tuple<int, int, int>, int> World::createChunk(int p, int q)
+{
+	seed(seed1);
+	map<tuple<int, int, int>, int> result;
+	auto func = [&](int x, int y, int z, int w, void* arg) {
+
+		result[make_tuple(x,y,z)]= w;
+	};
+	tuple <int, int, int>la;
+	
+	create_world(p,q, func, nullptr);
+	return result;
+}
+
+template <typename WorldFunc>
+void create_world(int p, int q, WorldFunc func, void *arg) {
     int pad = 1;
     for (int dx = -pad; dx < CHUNK_SIZE + pad; dx++) {
         for (int dz = -pad; dz < CHUNK_SIZE + pad; dz++) {
