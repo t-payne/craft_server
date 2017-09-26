@@ -47,5 +47,6 @@ void WorldCache::insertChunk(tuple<int, int> coords, Chunk chunk)
 	if ((int)cacheQueue.size() > cache_size)
 	{
 		cacheQueue.pop();
+		cache.erase(coords);
 	}
 }
