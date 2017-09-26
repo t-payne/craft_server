@@ -11,8 +11,8 @@
 
 int main()
 {
-	World Isee;
-	Isee.createChunk(31, 3);
+	World world;
+	world.getChunk(31, 3);
 	WSADATA wsa;
 	SOCKET master, new_socket, client_socket[30], s;
 	struct sockaddr_in server, address;
