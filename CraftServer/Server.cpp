@@ -1,8 +1,6 @@
 #include "Server.h"
 
 
-
-
 Server::Server()
 {
 	initialize(4080);
@@ -188,4 +186,7 @@ void Server::run()
 
 
 }
+void Server::parse()
+{
 
+}

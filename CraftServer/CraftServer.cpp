@@ -2,13 +2,17 @@
 
 #include "world.h"
 #include "Server.h"
+#include "Model.h"
 
 int main()
 {
-	World hello;
+	Model mod;
+	mod.commit();
+	/*World hello;
 	hello.getChunk(20, 11);
 	Server server;
-	server.run();
+	server.run();*/
+	
     return 0;
 }
 

@@ -10,6 +10,7 @@
 #include <stdio.h>
 
 
+
 using namespace std;
 
 class Server
@@ -20,6 +21,7 @@ public:
 	~Server();
 	void initialize(int port);
 	void run();
+	void parse();
 
 private:
 	int port;
