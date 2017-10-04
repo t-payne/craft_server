@@ -10,15 +10,40 @@ void Model::start()
 }
 void Model::run()
 {
-
-}
-void Model::createTable()
-{
-	sqlite3 *db;
-	int rc; // This line
-	string sqlTable1, sqlTable2; // This line
+	int rc;
 	rc = sqlite3_open("craft.db", &db);
+	createTables();
+	while (1)
+	{
+		auto currentTime=get_time::now();
+		auto timeElapsed = chrono::duration_cast<chrono::seconds>(currentTime - last_commit).count();
+		if (timeElapsed > commit_interval)
+		{
+			commit();
+		}
+		executeCommand();
+	}
+}
 
+void Model::execute(string query)
+{
+	int rc;
+	beginTransaction();
+	rc = sqlite3_exec(db, query.c_str(), NULL, NULL, NULL);
+}
+void Model::executeCommand()
+{
+	commands.front().execute();
+	commands.pop();
+	
+}
+void Model::addCommand(Command& command)
+{
+	commands.push(command);
+}
+void Model::createTables()
+{
+	int rc;
 	/* Create SQL statement */
 	vector<string>queries  {"CREATE TABLE IF NOT EXISTS block("  \
 		"p int               NOT NULL,"
@@ -61,19 +86,24 @@ void Model::createTable()
 		");",
 
 };
+	beginTransaction();
 	for (auto query : queries)
 	{
 		/* Execute SQL statement */
 		rc = sqlite3_exec(db, query.c_str(), NULL, NULL, NULL);
 		
 	}
-		
+	commit();
 	sqlite3_close(db);
 
 }
 void Model::commit()
 {
 	last_commit = get_time::now();
-	
-	
+	sqlite3_exec(db, "END TRANSACTION;", NULL, NULL, NULL);
+}
+void Model::beginTransaction()
+{
+	sqlite3_exec(db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
+
 }

@@ -4,7 +4,6 @@
 Server::Server()
 {
 	initialize(4080);
-
 }
 
 Server::Server(int port)
@@ -22,9 +21,9 @@ void Server::initialize(int port)
 
 	buffer = (char*)malloc((MAXRECV + 1) * sizeof(char));
 
-	for (i = 0; i < 30; i++)
+	for (i = 0; i < max_clients; i++)
 	{
-		client_socket[i] = 0;
+		clients[i].socket = 0;
 	}
 
 	printf("\nInitialising Winsock...");
@@ -51,7 +50,7 @@ void Server::initialize(int port)
 	server.sin_port = htons(port);
 
 	//Bind
-	if (bind(master, (struct sockaddr *)&server, sizeof(server)) == SOCKET_ERROR)
+	if (::bind(master, (struct sockaddr *)&server, sizeof(server)) == SOCKET_ERROR)
 	{
 		printf("Bind failed with error code : %d", WSAGetLastError());
 		exit(EXIT_FAILURE);
@@ -82,7 +81,7 @@ void Server::run()
 		//add child sockets to fd set
 		for (i = 0; i < max_clients; i++)
 		{
-			s = client_socket[i];
+			s = clients[i].socket;
 			if (s > 0)
 			{
 				FD_SET(s, &readfds);
@@ -121,9 +120,11 @@ void Server::run()
 			//add new socket to array of sockets
 			for (i = 0; i < max_clients; i++)
 			{
-				if (client_socket[i] == 0)
+				if (clients[i].socket == 0)
 				{
-					client_socket[i] = new_socket;
+					clients[i].socket = new_socket;
+					clients[i].port = ntohs(address.sin_port);
+					clients[i].address = inet_ntoa(address.sin_addr);
 					printf("Adding to list of sockets at index %d \n", i);
 					break;
 				}
@@ -133,7 +134,7 @@ void Server::run()
 		//else its some IO operation on some other socket :)
 		for (i = 0; i < max_clients; i++)
 		{
-			s = client_socket[i];
+			s = clients[i].socket;
 			//if client presend in read sockets             
 			if (FD_ISSET(s, &readfds))
 			{
@@ -154,7 +155,7 @@ void Server::run()
 
 						//Close the socket and mark as 0 in list for reuse
 						closesocket(s);
-						client_socket[i] = 0;
+						clients[i].socket = 0;
 					}
 					else
 					{
@@ -168,7 +169,7 @@ void Server::run()
 
 					//Close the socket and mark as 0 in list for reuse
 					closesocket(s);
-					client_socket[i] = 0;
+					clients[i].socket = 0;
 				}
 
 				//Echo back the message that came in

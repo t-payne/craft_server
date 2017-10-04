@@ -8,8 +8,9 @@
 #include "noise.h"
 #include "world.h"
 #include <stdio.h>
-
-
+#include <vector>
+#include "Client.h"
+#include "Model.h"
 
 using namespace std;
 
@@ -22,10 +23,12 @@ public:
 	void initialize(int port);
 	void run();
 	void parse();
+	Model model;
 
 private:
 	int port;
-	SOCKET master, new_socket, client_socket[30], s;
+	SOCKET master, new_socket,  s;
+	vector<Client>clients;
 	int max_clients = 30, activity, addrlen, i, valread;
 	WSADATA wsa;
 	struct sockaddr_in server, address;
@@ -36,6 +39,7 @@ private:
 	fd_set readfds;
 	//1 extra for null character, string termination
 	char *buffer;
+	
 
 
 };
