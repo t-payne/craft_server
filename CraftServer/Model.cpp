@@ -1,4 +1,13 @@
+#include <Windows.h>
+//#include "world.h"
+#include <thread>
+#include <time.h>
+#include <iostream>
+#include <tuple>
+#include "Command.h"
+#include "Client.h"
 #include "Model.h"
+
 
 Model::Model()
 {
@@ -24,6 +33,10 @@ void Model::run()
 		executeCommand();
 	}
 }
+Client& Model::getClient(int i)
+{
+	return clients[i];
+}
 
 void Model::execute(string query)
 {
@@ -33,13 +46,12 @@ void Model::execute(string query)
 }
 void Model::executeCommand()
 {
-	commands.front().execute();
+	commands.front()->execute();
 	commands.pop();
-	
 }
-void Model::addCommand(Command& command)
+void Model::addCommand(unique_ptr<Command> cmd_ptr)
 {
-	commands.push(command);
+	commands.push(make_unique<Command>(cmd_ptr));
 }
 void Model::createTables()
 {

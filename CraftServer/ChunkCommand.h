@@ -7,11 +7,8 @@ using namespace std;
 class ChunkCommand:public Command
 {
 public:
-	ChunkCommand(string chunkMessage );
+	ChunkCommand(string chunkMessage ); //takes the message. its supposes to parse the message
 	void execute()override;
-
-
-
 
 
 private:

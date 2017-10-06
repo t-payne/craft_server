@@ -8,8 +8,8 @@ int main()
 {
 	Model mod;
 	mod.commit();
-	Server server;
-	//server = mod;
+	Server server(mod);
+	
 	/*World hello;
 	hello.getChunk(20, 11);
 	Server server;

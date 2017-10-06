@@ -4,8 +4,8 @@
 class Command
 {
 public:
-	Command();
-	virtual void execute()=0;
+	//Command();
+	virtual void execute() = 0;
 
 
 

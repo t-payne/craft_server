@@ -1,11 +1,12 @@
 #include "CommandFactory.h"
 #include "ChunkCommand.h"
+#include "TalkCommand.h"
 
 CommandFactory::CommandFactory()
 {
 
 }
-Command& CommandFactory::createCommand(string message)
+unique_ptr<Command> CommandFactory::createCommand(string message)
 {
 //	ChunkCommand me;
 	switch (message[0])
@@ -16,9 +17,9 @@ Command& CommandFactory::createCommand(string message)
 	case 'B':
 
 		break;
-	case 'C':
-//		ChunkCommand chunkObject;
-		break;
+	case 'C': {
+		ChunkCommand chunkObject(message);
+		break; }
 	case 'D':
 
 			break;
@@ -33,11 +34,15 @@ Command& CommandFactory::createCommand(string message)
 	case 'R':
 
 		break;
-	case 'S':
+	case 'S': {
 
 		break;
-	case 'T':
+	}
+	case 'T': {
+		TalkCommand talk(message);
+		talk.execute;
 		break;
+	}
 	case 'E':
 
 		break;
@@ -47,5 +52,5 @@ Command& CommandFactory::createCommand(string message)
 	case 'U':
 		break;
 	}
-	
+	return make_unique<ChunkCommand>(ChunkCommand(message));
 }

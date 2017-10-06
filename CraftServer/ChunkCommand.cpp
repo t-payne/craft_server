@@ -22,5 +22,6 @@ void ChunkCommand::execute()
 		"and rowid > " + to_string(key) + ";"
 	};
 
-	auto rows = Model::execute(query); // results from the database
+	// auto rows = Model::execute(query); // results from the database
+	
 }

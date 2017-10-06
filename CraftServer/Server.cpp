@@ -1,12 +1,26 @@
+#include "ConnectCommand.h"
+//#pragma comment(lib,"ws2_32.lib")
+//#define _WINSOCK_DEPRECATED_NO_WARNINGS
+//#include <WinSock2.h>
+//#include <WS2tcpip.h>
+#include "config.h"
+#include "sqlite3.h"
+#include "noise.h"
+#include "world.h"
+#include <stdio.h>
+#include <vector>
+#include <memory>
+#include "Client.h"
+#include "Model.h"
 #include "Server.h"
 
 
-Server::Server()
+Server::Server(Model& model): model(model)
 {
 	initialize(4080);
 }
 
-Server::Server(int port)
+Server::Server(int port,Model& model):model(model)
 {
 	initialize(port);
 }
@@ -23,7 +37,7 @@ void Server::initialize(int port)
 
 	for (i = 0; i < max_clients; i++)
 	{
-		clients[i].socket = 0;
+		model.getClient(i).socket = 0;
 	}
 
 	printf("\nInitialising Winsock...");
@@ -66,7 +80,7 @@ void Server::initialize(int port)
 
 	addrlen = sizeof(struct sockaddr_in);
 
-
+	
 }
 void Server::run()
 {
@@ -81,7 +95,7 @@ void Server::run()
 		//add child sockets to fd set
 		for (i = 0; i < max_clients; i++)
 		{
-			s = clients[i].socket;
+			s = model.getClient(i).socket;
 			if (s > 0)
 			{
 				FD_SET(s, &readfds);
@@ -120,11 +134,16 @@ void Server::run()
 			//add new socket to array of sockets
 			for (i = 0; i < max_clients; i++)
 			{
-				if (clients[i].socket == 0)
+				if (model.getClient(i).socket == 0)
 				{
-					clients[i].socket = new_socket;
-					clients[i].port = ntohs(address.sin_port);
-					clients[i].address = inet_ntoa(address.sin_addr);
+					Client& client = model.getClient(i);
+					client.socket = new_socket;
+					client.port = ntohs(address.sin_port);
+					client.address = inet_ntoa(address.sin_addr);
+					client.id = i;
+					ConnectCommand ccmd(model, client);
+					//unique_ptr<Command> cmd_ptr = );
+					model.addCommand(make_unique<Command>(ccmd));
 					printf("Adding to list of sockets at index %d \n", i);
 					break;
 				}
@@ -134,7 +153,7 @@ void Server::run()
 		//else its some IO operation on some other socket :)
 		for (i = 0; i < max_clients; i++)
 		{
-			s = clients[i].socket;
+			s = model.getClient(i).socket;
 			//if client presend in read sockets             
 			if (FD_ISSET(s, &readfds))
 			{
@@ -155,7 +174,7 @@ void Server::run()
 
 						//Close the socket and mark as 0 in list for reuse
 						closesocket(s);
-						clients[i].socket = 0;
+						model.getClient(i).socket = 0;
 					}
 					else
 					{
@@ -169,7 +188,7 @@ void Server::run()
 
 					//Close the socket and mark as 0 in list for reuse
 					closesocket(s);
-					clients[i].socket = 0;
+					model.getClient(i).socket = 0;
 				}
 
 				//Echo back the message that came in
@@ -187,7 +206,7 @@ void Server::run()
 
 
 }
-void Server::parse()
-{
-
-}
+//void Server::parse()
+//{
+//
+//}

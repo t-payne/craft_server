@@ -1,16 +1,21 @@
 #pragma once
 #include "world.h"
-//#include "Server.h"
 #include <queue>
-#include <thread>
+//#include <thread>
 #include "sqlite3.h"
-#include <Windows.h>
+#include <memory>
+//#include <Windows.h>
 #include <string>
-#include <time.h>
-#include <iostream>
+//#include <time.h>
+//#include <iostream>
 #include <chrono>
-#include "Command.h"
-#include "Model.h"
+//#include <tuple>
+//#include "Command.h"
+//#include "Client.h"
+//#include "Model.h"
+
+class Client;
+class Command;
 
 using namespace std; 
 using get_time = chrono::steady_clock;
@@ -29,13 +34,16 @@ public:
 	static void beginTransaction();
 	static void execute(string query);
 	static void executeCommand();
-	static void addCommand(Command& command);
+	static void addCommand(unique_ptr<Command> command);
+	//static void getNextId();
+	static Client& getClient(int);
 private:
 	World world;
 	//Server server;
 	static chrono::time_point<chrono::steady_clock> last_commit;
-	static queue<Command>commands;
+	static queue<unique_ptr<Command>> commands;
 	static sqlite3 *db;
+	static vector<Client> clients;
 
 };
 
