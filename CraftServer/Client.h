@@ -29,6 +29,8 @@ public:
 	string nick; //client nickname
 	tuple<int, int, int, int, int> position;
 	static void run();
+	
+	//Client& remove(int id); //I
 private:
 	static queue<string> queue; // queue of outgoing messages to the client
 

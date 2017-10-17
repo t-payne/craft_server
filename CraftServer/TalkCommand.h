@@ -8,10 +8,10 @@ using namespace std;
 class TalkCommand:public Command
 {
 public:
-	TalkCommand(string message); //sends back to client. use createpacket . parses
+	const TalkCommand(Client& client,string message); //sends back to client. use createpacket . parses
 	void execute()override;
 
 private:
 	string message;
-	//Client& client;
+	Client& client;
 };

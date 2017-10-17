@@ -140,6 +140,7 @@ void Server::run()
 					client.socket = new_socket;
 					client.port = ntohs(address.sin_port);
 					client.address = inet_ntoa(address.sin_addr);
+					model.connect(client);//I
 					client.id = i;
 					ConnectCommand ccmd(model, client);
 					//unique_ptr<Command> cmd_ptr = );

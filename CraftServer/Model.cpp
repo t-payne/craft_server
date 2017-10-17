@@ -119,3 +119,23 @@ void Model::beginTransaction()
 	sqlite3_exec(db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
 
 }
+int& Model::search(Client& client)
+{
+	for (Client clientx:clients)
+	{
+		if (clientx.id == client.id)
+		{
+			return clientx.id;
+		}
+	}
+}
+void Model::deleteFromVector(Client& client)// client.id
+{
+	clients.erase(clients.begin()+client.id);
+}
+
+void Model::connect(Client& client)
+{
+	client.position = spawnPoint;
+	clients.push_back(client);
+}

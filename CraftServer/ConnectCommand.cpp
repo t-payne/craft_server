@@ -3,7 +3,7 @@
 
 ConnectCommand::ConnectCommand(Model& model, Client& client):model(model),client(client)
 {
-
+	
 }
 void ConnectCommand::execute()
 {
